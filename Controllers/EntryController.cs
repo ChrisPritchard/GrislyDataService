@@ -16,7 +16,13 @@ namespace GrislyDataService.Controllers
         public EntryController(IOptions<GrislyConfig> configOptions) => config = configOptions.Value;
 
         [HttpGet("")]
-        public IActionResult Get([FromQuery]string entryName)
+        public IActionResult GetAll()
+        {
+            return Content("[1,2,3,4,5]", "application/json");
+        }
+
+        [HttpGet("{entryName}")]
+        public IActionResult Get([FromRoute]string entryName)
         {
             var entryData = GetEntriesFromZip(entryName).Single();
             return entryData != null 
