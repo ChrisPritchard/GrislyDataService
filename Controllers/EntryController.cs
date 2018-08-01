@@ -4,13 +4,16 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace GrislyDataService.Controllers
 {
     [Route("api/Entries")]
     public class EntryController : Controller
     {
-        const string zipFileName = "./AppData/entries.zip";
+        private readonly GrislyConfig config;
+
+        public EntryController(IOptions<GrislyConfig> configOptions) => config = configOptions.Value;
 
         [HttpGet("")]
         public IActionResult Get([FromQuery]string entryName)
@@ -23,7 +26,7 @@ namespace GrislyDataService.Controllers
 
         private IEnumerable<string> GetEntriesFromZip(params string[] entryNames)
         {
-            using(var zipFile = new FileStream(zipFileName, FileMode.Open))
+            using(var zipFile = new FileStream(config.DataPath, FileMode.Open))
             using(var archive = new ZipArchive(zipFile, ZipArchiveMode.Read))
             {   
                 foreach(var entryName in entryNames)
